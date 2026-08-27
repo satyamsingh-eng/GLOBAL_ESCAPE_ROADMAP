@@ -136,7 +136,7 @@
     .contact-head strong { font-size: 13px; }
     .contact-head span { color: var(--muted); font-size: 11px; }
     .table-wrap { overflow-x: auto; max-width: 100%; }
-    .contact-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 12px; }
+    .contact-table { width: 100%; min-width: 1120px; border-collapse: collapse; font-size: 12px; }
     .contact-table th { padding: 9px 8px; text-align: left; border-bottom: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
     .contact-table td { padding: 12px 8px; vertical-align: top; border-bottom: 1px solid var(--line); }
     .contact-table td:first-child { padding-left: 0; }
@@ -273,10 +273,11 @@
       .contact-table tr:last-child { border-bottom: 0; }
       .contact-table td, .contact-table td:first-child { padding: 4px 0; border: 0; word-break: break-word; }
       .contact-table td::before { display: inline-block; width: 104px; color: var(--muted); font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; vertical-align: top; }
-      .contact-table td:nth-child(1)::before { content: "Contact"; }
-      .contact-table td:nth-child(2)::before { content: "Email"; }
-      .contact-table td:nth-child(3)::before { content: "LinkedIn"; }
-      .contact-table td:nth-child(4)::before { content: "Why"; }
+      .contact-table td:nth-child(1)::before { content: "Decision maker"; }
+      .contact-table td:nth-child(2)::before { content: "Professional email"; }
+      .contact-table td:nth-child(3)::before { content: "Personal email"; }
+      .contact-table td:nth-child(4)::before { content: "LinkedIn / socials"; }
+      .contact-table td:nth-child(5)::before { content: "Reach-out description"; }
       .operator-grid { grid-template-columns: 1fr; }
       .operator-cell, .operator-cell:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--ink); }
       .operator-cell:last-child { border-bottom: 0; }
@@ -555,7 +556,9 @@
       document.getElementById('proofLinkedin').textContent = `${account.linkedin_public_http_checks ?? allContacts.length} / ${allContacts.length}`;
 
       function companyCard(company) {
+        const packet = company.deep_research_packet || {};
         const tierText = company.tier === 'P0' ? 'FIRST WAVE' : company.tier === 'P1' ? 'SECOND WAVE' : 'STRETCH';
+        const companySocials = (company.company_socials || []).map(item => link(item.url, item.label || 'Open company profile ↗')).join('<br>') || '<span class="note">No separately verified company social handles</span>';
         const sources = (company.sources || []).map(source => {
           const status = source.status === 'direct_ok' ? 'DIRECT OK' : source.status === 'access_limited' ? `HTTP ${source.http_status}` : 'CHECK';
           return `<a class="source-link" href="${esc(safeUrl(source.url))}" target="_blank" rel="noopener noreferrer"><strong>${esc(source.label)} <span class="source-status">${esc(status)}</span></strong><small>${esc(source.title || source.url)}<br>${esc(source.what_it_proves || '')}</small></a>`;
@@ -563,11 +566,21 @@
         const contacts = (company.contacts || []).map(contact => {
           const publicCheck = contact.linkedin_public_check || {};
           const liStatus = publicCheck.http_status ? `HTTP ${publicCheck.http_status}` : 'CHECKED';
+          const professional = contact.professional_email || contact.email;
+          const professionalStatus = contact.professional_email_status || contact.email_status || 'unverified';
+          const personal = contact.personal_email && contact.personal_email_status === 'verified'
+            ? `<a href="mailto:${esc(contact.personal_email)}">${esc(contact.personal_email)}</a><br><span class="badge">VERIFIED</span>`
+            : '<span class="note">Not found / not verified</span>';
+          const socials = Array.isArray(contact.socials) && contact.socials.length
+            ? contact.socials.map(item => link(item.url, item.label || 'Open social ↗')).join('<br>')
+            : '<span class="note">No other social verified</span>';
+          const approach = contact.contact_description || contact.route || 'Professional access route.';
           return `<tr>
             <td><strong>${esc(contact.name)}</strong><span class="contact-title">${esc(contact.title || contact.current_title || 'Role not exposed')}</span></td>
-            <td>${contact.email ? `<a href="mailto:${esc(contact.email)}">${esc(contact.email)}</a>` : '<span class="note">not returned</span>'}</td>
-            <td>${contact.linkedin_url ? link(contact.linkedin_url, 'Open LinkedIn ↗') : '<span class="note">not returned</span>'}<br><span class="badge">APOLLO VERIFIED</span><span class="badge light">CURRENT MATCH</span><span class="badge light">${esc(liStatus)}</span></td>
-            <td>${esc(contact.route || '')}</td>
+            <td>${professional ? `<a href="mailto:${esc(professional)}">${esc(professional)}</a><br><span class="badge">${esc(professionalStatus === 'verified' ? 'VERIFIED' : professionalStatus.toUpperCase())}</span>` : '<span class="note">Not found / not verified</span>'}</td>
+            <td>${personal}</td>
+            <td>${contact.linkedin_url ? link(contact.linkedin_url, 'Open LinkedIn ↗') : '<span class="note">Not found / not verified</span>'}<br>${socials}<br><span class="badge light">CURRENT MATCH</span><span class="badge light">${esc(liStatus)}</span></td>
+            <td>${esc(approach)}</td>
           </tr>`;
         }).join('');
         return `<article class="target-card" data-company-id="${esc(company.id)}" data-country="${esc(company.country)}" data-tier="${esc(company.tier)}">
@@ -579,14 +592,16 @@
           </div>
           <div class="target-details">
             <div class="detail-grid">
-              <div class="detail-block"><h3>Company overview</h3><p>${esc(company.overview)}</p></div>
+              <div class="detail-block"><h3>Company profile</h3><p>${esc(company.overview)}</p></div>
+              <div class="detail-block"><h3>Funding / capital signal</h3><p>${esc(company.funding_signal || 'No funding figure was surfaced in the current evidence packet; do not infer one.')}</p></div>
               <div class="detail-block"><h3>Why this fits</h3><p>${esc(company.fit)}</p></div>
               <div class="detail-block"><h3>Entry route</h3><p>${esc(company.entry_route)}</p></div>
               <div class="detail-block"><h3>Language + relocation</h3><p><strong>Language:</strong> ${esc(company.language_signal)}<br><br><strong>Relocation:</strong> ${esc(company.relocation_signal)}</p></div>
             </div>
+            <div class="detail-block" style="margin-top:18px"><h3>Company socials and public surfaces</h3><p>${companySocials}</p></div>
             <div class="detail-block" style="margin-top:24px"><h3>Role lanes to search</h3><div class="role-list">${(company.role_lanes || []).map(role => `<span>${esc(role)}</span>`).join('')}</div></div>
             <div class="detail-block" style="margin-top:18px"><h3>Next move</h3><p>${esc(company.next_action)}</p></div>
-            <div class="contact-section"><div class="contact-head"><strong>Points of contact — ranked</strong><span>3 people · Apollo verified · not a hiring guarantee</span></div><div class="table-wrap"><table class="contact-table"><thead><tr><th>Contact</th><th>Verified work email</th><th>LinkedIn / check</th><th>Why approach</th></tr></thead><tbody>${contacts}</tbody></table></div><p class="contact-note">LinkedIn public checks are shown as HTTP results because the endpoint returned access/rate-limit responses. The canonical URL came from Apollo enrichment and was not silently upgraded into public-page proof.</p></div>
+            <div class="contact-section"><div class="contact-head"><strong>Points of contact — ranked</strong><span>3 people · Apollo verified · not a hiring guarantee</span></div><div class="table-wrap"><table class="contact-table"><thead><tr><th>Decision maker</th><th>Verified professional email</th><th>Verified personal email</th><th>LinkedIn / socials</th><th>Reach-out description</th></tr></thead><tbody>${contacts}</tbody></table></div><p class="contact-note">Professional emails are Apollo-verified work addresses. Personal emails and non-LinkedIn socials are shown only when separately verified; the current dataset found no verified personal emails or additional social handles, so they are marked honestly as unavailable. LinkedIn URLs came from Apollo and public checks returned HTTP access/rate-limit responses; they are not presented as independently readable profile proof.</p></div>
             <div class="source-section"><h3 class="table-label">Primary evidence links</h3><div class="source-list">${sources}</div></div>
           </div>
         </article>`;
