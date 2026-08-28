@@ -6,7 +6,11 @@ This folder maintains a job-first relocation route for a founder-side AI systems
 
 Canonical presentation: [`../GLOBAL_ESCAPE_ROADMAP.html`](../GLOBAL_ESCAPE_ROADMAP.html)
 
-Central data layer: [`opportunity_map_data.json`](opportunity_map_data.json)
+Central data layer: [`7_nation_opportunities.json`](RESEARCH/7_nation_opportunities.json)
+
+Supported opportunity presentation: [`FULLY_FUNDED_OPPORTUNITIES.html`](FULLY_FUNDED_OPPORTUNITIES.html)
+
+Decision diagram: [`7_nation_decision_diagram.html`](RESEARCH/7_nation_decision_diagram.html)
 
 Parallel company research packet: [`delegated_company_research.json`](delegated_company_research.json)
 
@@ -14,26 +18,25 @@ Primary checks for the delegated packet: [`delegated_primary_checks.json`](deleg
 
 Editable strategy diagram: [`../GLOBAL_ESCAPE_ENTRY_STRATEGY.excalidraw`](../GLOBAL_ESCAPE_ENTRY_STRATEGY.excalidraw)
 
-## Current Curation
+## Current Curation (v2, 28 August 2026)
 
-- **Japan:** 10 ranked targets.
-- **Singapore:** 10 ranked targets.
-- **Contacts:** 3 per company, 60 total.
-- **Apollo gate:** 60/60 contacts have Apollo `email_status=verified`, a LinkedIn URL, and a current-employer match.
-- **Official evidence pages:** 58/60 returned direct 2xx/3xx responses. The remaining two are Carro pages protected by a 403 web-application firewall response; the links are retained and labelled access-limited.
-- **LinkedIn recheck:** 60/60 canonical URLs were requested independently. LinkedIn returned access/rate-limit responses (999 or 429) rather than public profile bodies. The roadmap does not call those HTTP responses public-page proof.
+- **Countries:** Estonia, Japan, UAE, Germany, Netherlands, Singapore, Russia.
+- **Qualifying routes:** 14.
+- **Support gate:** every retained route has at least one official support item (tuition, stipend/salary, travel, housing, insurance, visa or work authorisation).
+- **Official URL reachability:** 31/33 unique official URLs returned HTTP 200; one Embassy of Japan India page returned 403 and the Estonia application portal timed out to the checker. Both remain linked and disclosed.
+- **Apollo:** 11 organization identity checks. Apollo is not treated as proof of funding, hiring, salary, or visa sponsorship.
+- **Old 34-card list:** superseded. Cards without explicit support evidence, stale deadlines, or unsupported relocation claims were removed or moved to exclusions.
 
 ## Research Method
 
 1. Reviewed local portfolio, resume, role-alignment, and project evidence before external discovery.
 2. Used web search in separate country/company batches to discover official company, product, career, internship, and role pages.
 3. Fetched the official URLs directly and stored HTTP status, final URL, title, and page excerpt.
-4. Ran a four-way parallel deep-research pass across the 20 companies, then fetched a second set of primary pages for the claims that could change ranking.
-5. Confirmed Apollo organization records through Composio and searched relevant leadership, product, engineering, operations, talent, and commercial functions.
-6. Enriched final people with Apollo by ID or exact name plus domain.
-7. Excluded stale, former, extrapolated-email, missing-email, missing-LinkedIn, or current-employer-mismatch records.
-8. Requested every final LinkedIn URL independently and retained the exact access result.
-9. Ranked targets using an analyst priority score across candidate fit, language/working environment, founder/team access, visible entry path, and relocation practicality.
+4. Ran parallel live research across seven country lanes and independently checked the official programme pages.
+5. Verified funding, deadlines, eligibility and support boundaries against government/university sources.
+6. Used Apollo through Composio for organization identity and employer watchlist cross-checks only.
+7. Excluded stale, unsupported, no-funding, unverified, or past-deadline items from the qualifying list; preserved them in the exclusion ledger.
+8. Ranked routes using technical fit, eligibility, support strength, deadline actionability, language, route realism and country risk.
 
 A score is a prioritisation aid, **not** a probability of receiving an offer. A contact is a high-value approach path, **not** proof that the person is currently hiring.
 
